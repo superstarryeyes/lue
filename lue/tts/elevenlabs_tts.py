@@ -52,30 +52,11 @@ class ElevenLabsTTS(TTSBase):
         # Create ElevenLabs client
         self.client = self.ElevenLabs(api_key=self.api_key)
         
-        # Verify the API key works by checking available voices with timeout
-        try:
-            # Add timeout to prevent hanging
-            voices = await asyncio.wait_for(
-                asyncio.to_thread(lambda: self.client.voices.get_all()), 
-                timeout=10.0
-            )
-            if not voices or not voices.voices:
-                self.console.print("[bold yellow]Warning: No voices found with your API key.[/bold yellow]")
-                
-            self.initialized = True
-            self.console.print("[green]ElevenLabs TTS model initialized successfully.[/green]")
-            return True
-            
-        except asyncio.TimeoutError:
-            self.console.print("[bold red]Error: ElevenLabs API request timed out.[/bold red]")
-            self.console.print("[yellow]Please check your internet connection and try again.[/yellow]")
-            logging.error("ElevenLabs API request timed out during initialization.")
-            return False
-        except Exception as e:
-            self.console.print(f"[bold red]Error: Failed to initialize ElevenLabs: {e}[/bold red]")
-            self.console.print("[yellow]Please check your API key and internet connection.[/yellow]")
-            logging.error(f"ElevenLabs initialization failed: {e}")
-            return False
+        # Skip voice verification during initialization to avoid startup lag
+        # Voice validation will happen during first audio generation call
+        self.initialized = True
+        self.console.print("[green]ElevenLabs TTS model initialized successfully.[/green]")
+        return True
 
     async def generate_audio(self, text: str, output_path: str):
         """Generates audio from text using ElevenLabs and saves it to a file."""
@@ -118,18 +99,6 @@ class ElevenLabsTTS(TTSBase):
         if not self.initialized:
             return
 
-        self.console.print("[bold cyan]Warming up the ElevenLabs TTS model...[/bold cyan]")
-        warmup_file = os.path.join(config.AUDIO_DATA_DIR, f".warmup_elevenlabs.{self.output_format}")
-        
-        try:
-            await self.generate_audio("Hello, I am ready.", warmup_file)
-            self.console.print("[green]ElevenLabs TTS model is ready.[/green]")
-        except Exception as e:
-            self.console.print(f"[bold yellow]Warning: ElevenLabs model warm-up failed: {e}[/bold yellow]")
-            logging.warning(f"ElevenLabs TTS warm-up failed: {e}", exc_info=True)
-        finally:
-            if os.path.exists(warmup_file):
-                try:
-                    os.remove(warmup_file)
-                except OSError:
-                    pass
+        # Skip warm-up to reduce startup time - ElevenLabs doesn't require pre-warming
+        self.console.print("[green]ElevenLabs TTS model is ready.[/green]")
+        return
