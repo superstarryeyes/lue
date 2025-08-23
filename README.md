@@ -23,7 +23,7 @@
 | **Feature**                             | **Description**                                                                                |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **📖 Multi-Format Support**             | Support for EPUB, PDF, TXT, DOCX, DOC, HTML, RTF, and Markdown with seamless format detection  |
-| **👄 Modular TTS System**               | Edge TTS (default) and Kokoro TTS (local/offline) with extensible architecture for new models |
+| **👄 Modular TTS System**               | Edge TTS (default), ElevenLabs TTS (AI voices), and Kokoro TTS (local/offline) with extensible architecture |
 | **🌌 Rich Terminal UI**                 | Clean, responsive interface with customizable color themes and full mouse & keyboard support   |
 | **💾 Smart Persistence**                | Automatic progress saving, state restoration, and cross-session continuity for seamless reading|
 | **🌍 Cross-Platform & Multilingual**    | Full support for macOS, Linux, Windows with 100+ languages and consistent global experience    |
@@ -123,6 +123,21 @@ pip install -r requirements.txt
 pip install .
 ```
 
+#### Enable ElevenLabs TTS (Optional)
+
+For high-quality AI voice synthesis:
+
+```bash
+# 1. Install ElevenLabs package
+pip install elevenlabs
+
+# 2. Set your API key (get it from https://elevenlabs.io/speech-synthesis)
+export ELEVENLABS_API_KEY="your_api_key_here"
+
+# Or alternatively, set it in config.py:
+# ELEVENLABS_API_KEY = "your_api_key_here"
+```
+
 ---
 
 ## 💻 Usage
@@ -135,6 +150,7 @@ lue path/to/your/book.epub
 
 # Use specific TTS model  
 lue --tts kokoro path/to/your/book.epub
+lue --tts elevenlabs path/to/your/book.epub
 
 # Use a specific voice (full list at VOICES.md)
 lue --voice "en-US-AriaNeural" path/to/your/book.epub
