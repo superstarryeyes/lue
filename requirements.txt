@@ -9,6 +9,9 @@ platformdirs>=4.3.8
 # Default TTS model
 edge-tts>=7.2.0
 
+# For ElevenLabs TTS:
+elevenlabs>=0.2.0
+
 ## Optional TTS models (uncomment to enable)
 ## For Kokoro TTS, also install PyTorch for your platform:
 ## CPU: pip install torch torchvision torchaudio
