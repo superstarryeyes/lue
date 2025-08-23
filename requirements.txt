@@ -10,7 +10,7 @@ platformdirs>=4.3.8
 edge-tts>=7.2.0
 
 # For ElevenLabs TTS:
-elevenlabs>=0.2.0
+elevenlabs>=2.11.0
 
 ## Optional TTS models (uncomment to enable)
 ## For Kokoro TTS, also install PyTorch for your platform:

@@ -31,8 +31,8 @@ class ElevenLabsTTS(TTSBase):
     async def initialize(self) -> bool:
         """Initializes the ElevenLabs TTS client."""
         try:
-            import elevenlabs
-            self.elevenlabs = elevenlabs
+            from elevenlabs import ElevenLabs
+            self.ElevenLabs = ElevenLabs
         except ImportError:
             self.console.print("[bold red]Error: 'elevenlabs' package not found.[/bold red]")
             self.console.print("[yellow]Please run 'pip install elevenlabs' to use this TTS model.[/yellow]")
@@ -49,19 +49,28 @@ class ElevenLabsTTS(TTSBase):
             logging.error("ElevenLabs API key not configured.")
             return False
 
-        # Set the API key
-        self.elevenlabs.set_api_key(self.api_key)
+        # Create ElevenLabs client
+        self.client = self.ElevenLabs(api_key=self.api_key)
         
-        # Verify the API key works by checking available voices
+        # Verify the API key works by checking available voices with timeout
         try:
-            voices = await asyncio.to_thread(self.elevenlabs.voices)
-            if not voices:
+            # Add timeout to prevent hanging
+            voices = await asyncio.wait_for(
+                asyncio.to_thread(lambda: self.client.voices.get_all()), 
+                timeout=10.0
+            )
+            if not voices or not voices.voices:
                 self.console.print("[bold yellow]Warning: No voices found with your API key.[/bold yellow]")
                 
             self.initialized = True
             self.console.print("[green]ElevenLabs TTS model initialized successfully.[/green]")
             return True
             
+        except asyncio.TimeoutError:
+            self.console.print("[bold red]Error: ElevenLabs API request timed out.[/bold red]")
+            self.console.print("[yellow]Please check your internet connection and try again.[/yellow]")
+            logging.error("ElevenLabs API request timed out during initialization.")
+            return False
         except Exception as e:
             self.console.print(f"[bold red]Error: Failed to initialize ElevenLabs: {e}[/bold red]")
             self.console.print("[yellow]Please check your API key and internet connection.[/yellow]")
@@ -81,30 +90,25 @@ class ElevenLabsTTS(TTSBase):
 
         try:
             # Use asyncio.to_thread to run the blocking API call in a thread
-            audio_data = await asyncio.to_thread(
-                self.elevenlabs.generate,
+            audio_generator = await asyncio.to_thread(
+                self.client.text_to_speech.convert,
+                voice_id=self.voice,
                 text=text,
-                voice=self.voice,
-                model="eleven_monolingual_v1"
+                model_id="eleven_monolingual_v1"
             )
             
             # Save the audio data to file
             with open(output_path, 'wb') as f:
-                for chunk in audio_data:
+                for chunk in audio_generator:
                     if chunk:
                         f.write(chunk)
                         
-        except self.elevenlabs.UnauthenticatedRateLimitError:
-            self.console.print("[bold red]Error: ElevenLabs API quota exceeded or invalid API key.[/bold red]")
-            self.console.print("[yellow]Please check your ElevenLabs account quota.[/yellow]")
-            raise
-            
-        except self.elevenlabs.RateLimitError:
-            self.console.print("[bold yellow]Warning: ElevenLabs rate limit exceeded. Retrying after delay...[/bold yellow]")
-            await asyncio.sleep(2)  # Wait before retrying
-            await self.generate_audio(text, output_path)  # Retry
-            
         except Exception as e:
+            if "quota" in str(e).lower() or "rate limit" in str(e).lower():
+                self.console.print("[bold red]Error: ElevenLabs API quota exceeded or rate limit reached.[/bold red]")
+                self.console.print("[yellow]Please check your ElevenLabs account quota.[/yellow]")
+            else:
+                self.console.print(f"[bold red]Error: ElevenLabs API call failed: {e}[/bold red]")
             logging.error(f"ElevenLabs audio generation failed for text: '{text[:50]}...'", exc_info=True)
             raise RuntimeError(f"ElevenLabs TTS failed: {e}")
 

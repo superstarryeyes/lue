@@ -10,7 +10,7 @@ DEFAULT_TTS_MODEL = "edge"
 TTS_VOICES = {
     "edge": "en-US-JennyNeural",
     "kokoro": "af_heart",
-    "elevenlabs": "Rachel",  # Default ElevenLabs voice
+    "elevenlabs": "Peter Harwood",  # Default ElevenLabs voice
 }
 
 # Language codes for TTS models that require them
