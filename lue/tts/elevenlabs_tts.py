@@ -31,7 +31,7 @@ class ElevenLabsTTS(TTSBase):
     async def initialize(self) -> bool:
         """Initializes the ElevenLabs TTS client."""
         try:
-            from elevenlabs import ElevenLabs
+            from elevenlabs.client import ElevenLabs
             self.ElevenLabs = ElevenLabs
         except ImportError:
             self.console.print("[bold red]Error: 'elevenlabs' package not found.[/bold red]")
@@ -90,16 +90,17 @@ class ElevenLabsTTS(TTSBase):
 
         try:
             # Use asyncio.to_thread to run the blocking API call in a thread
-            audio_generator = await asyncio.to_thread(
+            audio = await asyncio.to_thread(
                 self.client.text_to_speech.convert,
-                voice_id=self.voice,
                 text=text,
-                model_id="eleven_monolingual_v1"
+                voice_id=self.voice,
+                model_id="eleven_multilingual_v2",
+                output_format="mp3_44100_128"
             )
             
             # Save the audio data to file
             with open(output_path, 'wb') as f:
-                for chunk in audio_generator:
+                for chunk in audio:
                     if chunk:
                         f.write(chunk)
                         
