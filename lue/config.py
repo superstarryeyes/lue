@@ -10,6 +10,7 @@ DEFAULT_TTS_MODEL = "edge"
 TTS_VOICES = {
     "edge": "en-US-JennyNeural",
     "kokoro": "af_heart",
+    "elevenlabs": "Rachel",  # Default ElevenLabs voice
 }
 
 # Language codes for TTS models that require them
@@ -46,3 +47,6 @@ PDF_FILTER_FOOTNOTES = True  # Filter page numbers and footnotes in bottom margi
 PDF_HEADER_TOP_MARGIN = 0.1  # Top 10% of page considered header area
 PDF_FOOTNOTE_BOTTOM_MARGIN = 0.9  # Bottom 10% of page considered footnote area
 PDF_HEADER_REPETITION_THRESHOLD = 0.8  # Text must appear on 80% of pages to be considered repeated header
+
+# ElevenLabs API configuration
+ELEVENLABS_API_KEY = None  # Set this to your ElevenLabs API key or use ELEVENLABS_API_KEY environment variable
