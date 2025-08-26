@@ -123,7 +123,65 @@ pip install -r requirements.txt
 # 4. Install Lue
 pip install .
 ```
+---
 
+### Containerized Setup (Podman)
+
+For a containerized environment, you can use the provided `Containerfile`.
+
+#### Host Prerequisites
+
+  - **Podman** must be installed on your host. ubuntu: `sudo apt-get install podman`
+  - **NVIDIA Drivers** must be installed for GPU support.
+  - **NVIDIA Container Toolkit** must be installed. `sudo apt-get install nvidia-container-toolkit`
+      - After installation, run: `sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`, now the podman containers can use the host Nvidia GPU.
+
+#### Build and Run
+
+1.  **Build the container image**:
+
+    ```bash
+    ./build.sh
+    ```
+
+2.  **Run the application**:
+
+    ```bash
+    ./run.sh
+    ```
+
+    The `run.sh` script accepts four optional arguments.
+    1- `BOOK_FULL_PATH` defaults to `sample.txt`
+    2- `MODELS_DIR` defaults to `/tmp`
+    3- `LOG_DIR` defaults to `/tmp`
+    4- `TTS_MODEL` defaults to `edge`
+
+#### Enable Kokoro TTS in Container (Optional)
+
+1.  **Edit `requirements.txt`**: Uncomment the Kokoro TTS dependencies:
+
+    ```
+    kokoro>=0.9.4
+    soundfile>=0.13.1
+    huggingface-hub>=0.34.4
+    ```
+
+2.  **Edit `Containerfile`**:
+
+      * To use a **GPU**, uncomment the following line to install PyTorch with CUDA support:
+        ```dockerfile
+        RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+        ```
+      * For **CPU-only**, uncomment the following line to install PyTorch with CPU support:
+        ```dockerfile
+        RUN pip install torch torchvision torchaudio
+        ```
+
+3.  **Rebuild the container** with the updated dependencies:
+
+    ```bash
+    ./build.sh
+    ```
 ---
 
 ## 💻 Usage
