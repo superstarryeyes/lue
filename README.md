@@ -40,7 +40,7 @@
 # 1. Install FFmpeg (required for audio processing)
 # macOS
 brew install ffmpeg
-# Ubuntu/Debian  
+# Ubuntu/Debian
 sudo apt install ffmpeg
 # Windows: Download from ffmpeg.org and add to PATH
 
@@ -64,7 +64,7 @@ python -m lue sample.txt
 #### Core Requirements
 - **FFmpeg** - Audio processing (required)
 
-#### Optional Dependencies  
+#### Optional Dependencies
 - **espeak** - Kokoro TTS support
 - **antiword** - .doc file support
 
@@ -78,7 +78,7 @@ brew install espeak antiword
 #### Ubuntu/Debian
 ```bash
 sudo apt update && sudo apt install ffmpeg
-# Optional  
+# Optional
 sudo apt install espeak antiword
 ```
 
@@ -125,16 +125,16 @@ pip install .
 ```
 ---
 
-### Containerized Setup (Podman)
+### Containerized Setup (Docker)
 
-For a containerized environment, you can use the provided `Containerfile`.
+For a containerized environment, you can use the provided `Dockerfile`.
 
 #### Host Prerequisites
 
-  - **Podman** must be installed on your host. ubuntu: `sudo apt-get install podman`
+  - **Docker** must be installed on your host.
   - **NVIDIA Drivers** must be installed for GPU support.
   - **NVIDIA Container Toolkit** must be installed. `sudo apt-get install nvidia-container-toolkit`
-      - After installation, run: `sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`, now the podman containers can use the host Nvidia GPU.
+      - After installation, run: `sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`, now the docker containers can use the host Nvidia GPU.
 
 #### Build and Run
 
@@ -166,7 +166,7 @@ For a containerized environment, you can use the provided `Containerfile`.
     huggingface-hub>=0.34.4
     ```
 
-2.  **Edit `Containerfile`**:
+2.  **Edit `Dockerfile`**:
 
       * To use a **GPU**, uncomment the following line to install PyTorch with CUDA support:
         ```dockerfile
@@ -195,7 +195,7 @@ lue path/to/your/book.epub
 # Launch without arguments to open the last book you were reading
 lue
 
-# Use specific TTS model  
+# Use specific TTS model
 lue --tts kokoro path/to/your/book.epub
 
 # Use a specific voice (full list at VOICES.md)
@@ -236,14 +236,14 @@ lue --help
 ### Mouse Controls
 
 - **🖱️ Click** - Jump to sentence
-- **🔄 Scroll** - Navigate content  
+- **🔄 Scroll** - Navigate content
 - **📍 Progress bar click** - Jump to position
 
 ---
 
 ## 🧩 Development
 
-> **Interested in extending Lue?** 
+> **Interested in extending Lue?**
 
 Check out the [Developer Guide](DEVELOPER.md) for instructions on adding new TTS models and contributing to the project.
 
@@ -251,7 +251,7 @@ Check out the [Developer Guide](DEVELOPER.md) for instructions on adding new TTS
 
 **Reading Progress:**
 - **macOS:** `~/Library/Application Support/lue/`
-- **Linux:** `~/.local/share/lue/`  
+- **Linux:** `~/.local/share/lue/`
 - **Windows:** `C:\Users\<User>\AppData\Local\lue\`
 
 **Error Logs:**

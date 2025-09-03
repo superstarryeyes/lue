@@ -28,11 +28,10 @@ echo "  TTS_MODEL: $TTS_MODEL"
 echo "---"
 
 
-# --- Podman Command ---
+# --- Docker Command ---
 # Run the container
 # -it: Run in interactive mode with a TTY, so you can use the reader.
 # --rm: Automatically remove the container when you exit.
-# --replace: Replace the container if it already exists.
 # --name: Give the container a name.
 # -v: Mount a local directory to a directory inside the container.
 #  - mounts directory where the book is saved.
@@ -45,14 +44,13 @@ echo "---"
 # --device: Give the container access to GPU devices.
 # --security-opt: Set security options.
 
-podman run -it --rm --replace --name lue-app \
+docker run -it --rm --name lue-app \
   -e PULSE_SERVER=unix:/run/user/$(id -u)/pulse/native \
   -v /run/user/$(id -u)/pulse/native:/run/user/$(id -u)/pulse/native \
-  -v "$BOOK_DIR:/app/books:z" \
-  -v "$LOG_DIR:/root/.local/state/lue/log:z" \
-  -v "$MODELS_DIR:/root/.local/share:z" \
+  -v "$BOOK_DIR:/app/books" \
+  -v "$LOG_DIR:/root/.local/state/lue/log" \
+  -v "$MODELS_DIR:/root/.local/share" \
   -e XDG_DATA_HOME="/root/.local/share" \
-  --device nvidia.com/gpu=all \
-  --security-opt=label=disable \
+  --gpus all \
   lue-reader --tts $TTS_MODEL \
   "/app/books/$BOOK_FILENAME"
