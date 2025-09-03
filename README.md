@@ -23,7 +23,7 @@
 | **Feature**                             | **Description**                                                                                |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **📖 Multi-Format Support**             | Support for EPUB, PDF, TXT, DOCX, DOC, HTML, RTF, and Markdown with seamless format detection  |
-| **👄 Modular TTS System**               | Edge TTS (default) and Kokoro TTS (local/offline) with extensible architecture for new models |
+| **👄 Modular TTS System** | Edge (default), Kokoro, and high-quality Coqui XTTS (local) with an extensible architecture for new models    |
 | **🌌 Rich Terminal UI**                 | Clean, responsive interface with customizable color themes and full mouse & keyboard support   |
 | **💾 Smart Persistence**                | Automatic progress saving, state restoration, and cross-session continuity for seamless reading|
 | **🌍 Cross-Platform & Multilingual**    | Full support for macOS, Linux, Windows with 100+ languages and consistent global experience    |
@@ -40,7 +40,7 @@
 # 1. Install FFmpeg (required for audio processing)
 # macOS
 brew install ffmpeg
-# Ubuntu/Debian  
+# Ubuntu/Debian
 sudo apt install ffmpeg
 # Windows: Download from ffmpeg.org and add to PATH
 
@@ -64,7 +64,7 @@ python -m lue sample.txt
 #### Core Requirements
 - **FFmpeg** - Audio processing (required)
 
-#### Optional Dependencies  
+#### Optional Dependencies
 - **espeak** - Kokoro TTS support
 - **antiword** - .doc file support
 
@@ -78,7 +78,7 @@ brew install espeak antiword
 #### Ubuntu/Debian
 ```bash
 sudo apt update && sudo apt install ffmpeg
-# Optional  
+# Optional
 sudo apt install espeak antiword
 ```
 
@@ -124,6 +124,29 @@ pip install -r requirements.txt
 pip install .
 ```
 
+#### Enable Coqui XTTS (Optional)
+
+For high-quality, local/offline TTS capabilities:
+
+```
+# 1. Edit requirements.txt - uncomment the Coqui TTS packages:
+TTS>=0.22.0
+soundfile>=0.13.1
+huggingface-hub>=0.34.4
+
+# 2. Install PyTorch (if not already installed for another model)
+# CPU version:
+pip install torch torchvision torchaudio
+# GPU version (CUDA):
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# 3. Install updated requirements
+pip install -r requirements.txt
+
+# 4. Install Lue
+pip install .
+```
+
 ---
 
 ## 💻 Usage
@@ -137,11 +160,14 @@ lue path/to/your/book.epub
 # Launch without arguments to open the last book you were reading
 lue
 
-# Use specific TTS model  
+# Use specific TTS model
 lue --tts kokoro path/to/your/book.epub
 
 # Use a specific voice (full list at VOICES.md)
 lue --voice "en-US-AriaNeural" path/to/your/book.epub
+
+# For Coqui, specify the path to a speaker file as voice cloning is required with this advanced TTS model.
+lue --tts coqui --voice "path/to/speaker.wav" path/to/book.epub
 
 # Set the speech speed (e.g., 1.5x)
 lue --speed 1.5 path/to/your/book.epub
@@ -181,14 +207,14 @@ lue --help
 ### Mouse Controls
 
 - **🖱️ Click** - Jump to sentence
-- **🔄 Scroll** - Navigate content  
+- **🔄 Scroll** - Navigate content
 - **📍 Progress bar click** - Jump to position
 
 ---
 
 ## 🧩 Development
 
-> **Interested in extending Lue?** 
+> **Interested in extending Lue?**
 
 Check out the [Developer Guide](DEVELOPER.md) for instructions on adding new TTS models and contributing to the project.
 
@@ -196,7 +222,7 @@ Check out the [Developer Guide](DEVELOPER.md) for instructions on adding new TTS
 
 **Reading Progress:**
 - **macOS:** `~/Library/Application Support/lue/`
-- **Linux:** `~/.local/share/lue/`  
+- **Linux:** `~/.local/share/lue/`
 - **Windows:** `C:\Users\<User>\AppData\Local\lue\`
 
 **Error Logs:**
