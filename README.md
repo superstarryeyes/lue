@@ -40,7 +40,7 @@
 # 1. Install FFmpeg (required for audio processing)
 # macOS
 brew install ffmpeg
-# Ubuntu/Debian  
+# Ubuntu/Debian
 sudo apt install ffmpeg
 # Windows: Download from ffmpeg.org and add to PATH
 
@@ -62,7 +62,7 @@ python -m lue sample.txt
 #### Core Requirements
 - **FFmpeg** - Audio processing (required)
 
-#### Optional Dependencies  
+#### Optional Dependencies
 - **espeak** - Kokoro TTS support
 - **antiword** - .doc file support
 
@@ -76,7 +76,7 @@ brew install espeak antiword
 #### Ubuntu/Debian
 ```bash
 sudo apt update && sudo apt install ffmpeg
-# Optional  
+# Optional
 sudo apt install espeak antiword
 ```
 
@@ -121,7 +121,65 @@ pip install -r requirements.txt
 # 4. Install Lue
 pip install .
 ```
+---
 
+### Containerized Setup (Docker)
+
+For a containerized environment, you can use the provided `Dockerfile`.
+
+#### Host Prerequisites
+
+  - **Docker** must be installed on your host.
+  - **NVIDIA Drivers** must be installed for GPU support.
+  - **NVIDIA Container Toolkit** must be installed. `sudo apt-get install nvidia-container-toolkit`
+      - After installation, run: `sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml`, now the docker containers can use the host Nvidia GPU.
+
+#### Build and Run
+
+1.  **Build the container image**:
+
+    ```bash
+    ./build.sh
+    ```
+
+2.  **Run the application**:
+
+    ```bash
+    ./run.sh
+    ```
+
+    The `run.sh` script accepts four optional arguments.
+    1- `BOOK_FULL_PATH` defaults to `sample.txt`
+    2- `MODELS_DIR` defaults to `/tmp`
+    3- `LOG_DIR` defaults to `/tmp`
+    4- `TTS_MODEL` defaults to `edge`
+
+#### Enable Kokoro TTS in Container (Optional)
+
+1.  **Edit `requirements.txt`**: Uncomment the Kokoro TTS dependencies:
+
+    ```
+    kokoro>=0.9.4
+    soundfile>=0.13.1
+    huggingface-hub>=0.34.4
+    ```
+
+2.  **Edit `Dockerfile`**:
+
+      * To use a **GPU**, uncomment the following line to install PyTorch with CUDA support:
+        ```dockerfile
+        RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+        ```
+      * For **CPU-only**, uncomment the following line to install PyTorch with CPU support:
+        ```dockerfile
+        RUN pip install torch torchvision torchaudio
+        ```
+
+3.  **Rebuild the container** with the updated dependencies:
+
+    ```bash
+    ./build.sh
+    ```
 ---
 
 ## 💻 Usage
@@ -135,7 +193,7 @@ lue path/to/your/book.epub
 # Launch without arguments to open the last book you were reading
 lue
 
-# Use specific TTS model  
+# Use specific TTS model
 lue --tts kokoro path/to/your/book.epub
 
 # Use a specific voice (full list at VOICES.md)
@@ -179,14 +237,14 @@ lue --help
 ### Mouse Controls
 
 - **🖱️ Click** - Jump to sentence
-- **🔄 Scroll** - Navigate content  
+- **🔄 Scroll** - Navigate content
 - **📍 Progress bar click** - Jump to position
 
 ---
 
 ## 🧩 Development
 
-> **Interested in extending Lue?** 
+> **Interested in extending Lue?**
 
 Check out the [Developer Guide](DEVELOPER.md) for instructions on adding new TTS models and contributing to the project.
 
@@ -194,7 +252,7 @@ Check out the [Developer Guide](DEVELOPER.md) for instructions on adding new TTS
 
 **Reading Progress:**
 - **macOS:** `~/Library/Application Support/lue/`
-- **Linux:** `~/.local/share/lue/`  
+- **Linux:** `~/.local/share/lue/`
 - **Windows:** `C:\Users\<User>\AppData\Local\lue\`
 
 **Error Logs:**
