@@ -13,6 +13,7 @@ To configure voices and languages, edit the `lue/config.py` file:
 TTS_VOICES = {
     "edge": "en-US-JennyNeural",  # Default Edge voice
     "kokoro": "af_heart",         # Default Kokoro voice
+    "coqui": "path/to/your/voice.wav", # Default path to a Coqui speaker .wav
 }
 
 # Language settings for TTS models
@@ -44,6 +45,29 @@ When using Kokoro, make sure the `lang_code` matches your selected voice. For mo
 | **Brazilian Portuguese**| `p` | espeak-ng `pt-br` fallback |
 | **Japanese** | `j` | Requires `pip install misaki[ja]` |
 | **Mandarin Chinese** | `z` | Requires `pip install misaki[zh]` |
+
+### Coqui Model Language Codes
+
+The Coqui XTTS model supports a variety of languages. Use the following codes with the --lang argument. For more details, refer to the [Coqui TTS Documentation](https://github.com/coqui-ai/TTS).
+
+| Language | Code |
+| :--- | :--- |
+| English | en |
+| Spanish | es |
+| French | fr |
+| German | de |
+| Italian | it |
+| Portuguese| pt |
+| Polish | pl |
+| Turkish | tr |
+| Russian | ru |
+| Dutch | nl |
+| Czech | cs |
+| Arabic | ar |
+| Chinese (Mandarin) | zh-cn |
+| Japanese | ja |
+| Hungarian | hu |
+| Korean | ko |
 
 ***
 

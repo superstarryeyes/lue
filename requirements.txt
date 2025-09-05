@@ -10,9 +10,16 @@ platformdirs>=4.3.8
 edge-tts>=7.2.0
 
 ## Optional TTS models (uncomment to enable)
-## For Kokoro TTS, also install PyTorch for your platform:
+# Required packages for the Kokoro TTX model
+# kokoro>=0.9.4
+
+# Required packages for the Coqui XTTS model
+# TTS>=0.22.0
+# transformers==4.33.0
+
+# Common requirement for Kokoro and Coqui
+# install PyTorch for your platform:
 ## CPU: pip install torch torchvision torchaudio
 ## CUDA: pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-# kokoro>=0.9.4
 # soundfile>=0.13.1
 # huggingface-hub>=0.34.4

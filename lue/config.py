@@ -10,6 +10,7 @@ DEFAULT_TTS_MODEL = "edge"
 TTS_VOICES = {
     "edge": "en-US-JennyNeural",
     "kokoro": "af_heart",
+    "coqui": "/tmp/default-voice.wav",
 }
 
 # Language codes for TTS models that require them
