@@ -1,56 +1,96 @@
 #!/bin/bash
 
 # --- Script Setup ---
-# This script runs a 'lue-reader' container to read a book file.
+# A robust, cross-platform script to run the 'lue-reader' container.
+
+# --- User-Configurable Ports ---
+# Users can override these defaults by setting the environment variables before running the script.
+# Example: MACOS_PORT=12346 ./run.sh
+MACOS_PORT="${MACOS_PORT:-12345}"
+WINDOWS_PORT="${WINDOWS_PORT:-4713}"
 
 # --- Path Processing ---
-# Use the value of the environment variable if it exists, otherwise use the default.
-# The ${VARIABLE:-default_value} syntax provides a default if VARIABLE is unset or empty.
 BOOK_FULL_PATH="${BOOK_FULL_PATH:-sample.txt}"
 MODELS_DIR="${MODELS_DIR:-/tmp}"
-LOG_DIR="${LOG_DIR:-/tmp}"
+LOG_DIR="${LOG_DIR:-.}"
 TTS_MODEL="${TTS_MODEL:-edge}"
 
-# Extract the directory from the full book path for the volume mount.
-# Example: /home/user/books/war-of-art.txt -> /home/user/books
 BOOK_DIR=$(dirname "$BOOK_FULL_PATH")
-
-# Extract the filename from the full book path to be used inside the container.
-# Example: /home/user/books/war-of-art.txt -> war-of-art.txt
 BOOK_FILENAME=$(basename "$BOOK_FULL_PATH")
 
+# --- OS-Specific Audio Configuration ---
+AUDIO_ARGS=""
+OS="$(uname -s)"
+SOCAT_PID=""
+
+# Function to clean up background processes on exit
+cleanup() {
+    if [ -n "$SOCAT_PID" ]; then
+        echo "Stopping background audio bridge..."
+        kill "$SOCAT_PID"
+    fi
+}
+trap cleanup EXIT
+
+case "${OS}" in
+    Linux*)
+        echo "Configuring for Linux with PulseAudio..."
+        # This is the standard, most reliable method for Linux desktops.
+        AUDIO_ARGS="-e PULSE_SERVER=unix:/run/user/$(id -u)/pulse/native -v /run/user/$(id -u)/pulse/native:/run/user/$(id -u)/pulse/native"
+        ;;
+    Darwin*)
+        echo "Configuring for macOS..."
+        if ! command -v socat &> /dev/null; then
+            echo "Error: 'socat' is not installed. Please run 'brew install socat' first."
+            exit 1
+        fi
+
+        echo "Starting background audio bridge on port ${MACOS_PORT}..."
+        # Create a temporary directory for the socket if it doesn't exist
+        mkdir -p /tmp/pulse
+        socat TCP-LISTEN:${MACOS_PORT},reuseaddr,fork UNIX-CONNECT:/tmp/pulse/native &
+        SOCAT_PID=$!
+
+        # --- Robust Readiness Check ---
+        # Ping the server with retries instead of using a fixed sleep.
+        echo "Waiting for audio bridge to be ready..."
+        for i in {1..10}; do
+            if nc -z 127.0.0.1 ${MACOS_PORT}; then
+                echo "Audio bridge is active."
+                break
+            fi
+            sleep 0.2
+        done
+        if ! nc -z 127.0.0.1 ${MACOS_PORT}; then
+            echo "Error: Audio bridge failed to start in time."
+            exit 1
+        fi
+
+        HOST_IP="host.docker.internal" # Use Docker's internal DNS for the host
+        AUDIO_ARGS="-e PULSE_SERVER=tcp:${HOST_IP}:${MACOS_PORT}"
+        ;;
+    CYGWIN*|MINGW*|MSYS*)
+        echo "Configuring for Windows..."
+        HOST_IP="host.docker.internal"
+        AUDIO_ARGS="-e PULSE_SERVER=tcp:${HOST_IP}:${WINDOWS_PORT}"
+        echo "Attempting to connect to PulseAudio server at ${HOST_IP}:${WINDOWS_PORT}"
+        ;;
+    *)
+        echo "Unsupported OS: ${OS}. Audio might not work."
+        ;;
+esac
+
 # --- Usage Information ---
-echo "Starting lue-reader with the following settings:"
-echo "  BOOK_FULL_PATH: $BOOK_FULL_PATH"
-echo "  MODELS_DIR: $MODELS_DIR"
-echo "  LOG_DIR: $LOG_DIR"
-echo "  TTS_MODEL: $TTS_MODEL"
+echo "Starting lue-reader..."
 echo "---"
 
-
 # --- Docker Command ---
-# Run the container
-# -it: Run in interactive mode with a TTY, so you can use the reader.
-# --rm: Automatically remove the container when you exit.
-# --name: Give the container a name.
-# -v: Mount a local directory to a directory inside the container.
-#  - mounts directory where the book is saved.
-#  - a directory the containerized application will stream logs to.
-#  - a directory on the host to download models from hugging face into.
-#    (it is a bad practice to store model weights on container volumes)
-# -e: Set environment variables.
-#   - PULSE_SERVER: allows the container to access the host sound device.
-#   - XDG_DATA_HOME: specify the log directory in the container (which is bind mounted).
-# --device: Give the container access to GPU devices.
-# --security-opt: Set security options.
-
 docker run -it --rm --name lue-app \
-  -e PULSE_SERVER=unix:/run/user/$(id -u)/pulse/native \
-  -v /run/user/$(id -u)/pulse/native:/run/user/$(id -u)/pulse/native \
+  ${AUDIO_ARGS} \
   -v "$BOOK_DIR:/app/books" \
-  -v "$LOG_DIR:/root/.local/state/lue/log" \
+  -v "$LOG_DIR:/root/.local/state/lue" \
   -v "$MODELS_DIR:/root/.local/share" \
   -e XDG_DATA_HOME="/root/.local/share" \
   --gpus all \
-  lue-reader --tts $TTS_MODEL \
+  lue-reader --tts "$TTS_MODEL" \
   "/app/books/$BOOK_FILENAME"
