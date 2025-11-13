@@ -9,7 +9,7 @@
 [![Terminal](https://img.shields.io/badge/interface-terminal-86c9fa.svg)](https://github.com/superstarryeyes/lue)
 [![Discord](https://img.shields.io/badge/Discord-Join%20our%20Community-5865F2?logo=discord&logoColor=white)](https://discord.gg/z8sE2gnMNk)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Installation](#-installation) • [Usage](#-usage) • [Customize](#️-customize) • [Development](#-development)
+[Features](#-features) • [Quick Start](#-quick-start-macos-and-linux) • [Installation](#-installation-macos-linux-and-windows) • [Usage](#-usage) • [Customize](#️-customize) • [Development](#-development)
 
 <img src="https://github.com/superstarryeyes/lue/blob/main/images/lue-screenshot.gif" alt="Lue Screenshot" width="100%" />
 
@@ -53,7 +53,7 @@ lue --guide
 lue path/to/your/book.epub 
 ```
 
-> **📝 Note:** Quick start uses Edge TTS (requires internet). For offline capabilities, see [full installation](#-installation).
+> **📝 Note:** Quick start uses Edge TTS (requires internet). For offline capabilities, see [full installation](#-installation-macos-linux-and-windows).
 
 ---
 
