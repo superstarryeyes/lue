@@ -9,7 +9,7 @@
 [![Terminal](https://img.shields.io/badge/interface-terminal-86c9fa.svg)](https://github.com/superstarryeyes/lue)
 [![Discord](https://img.shields.io/badge/Discord-Join%20our%20Community-5865F2?logo=discord&logoColor=white)](https://discord.gg/z8sE2gnMNk)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Installation](#-installation) • [Usage](#-usage) • [Customize](#️-customize) • [Development](#-development)
+[Features](#-features) • [Quick Start](#-quick-start-macos-and-linux) • [Installation](#-installation-macos-linux-and-windows) • [Usage](#-usage) • [Customize](#️-customize) • [Development](#-development)
 
 <img src="https://github.com/superstarryeyes/lue/blob/main/images/lue-screenshot.gif" alt="Lue Screenshot" width="100%" />
 
@@ -53,7 +53,7 @@ lue --guide
 lue path/to/your/book.epub 
 ```
 
-> **📝 Note:** Quick start uses Edge TTS (requires internet). For offline capabilities, see [full installation](#-installation).
+> **📝 Note:** Quick start uses Edge TTS (requires internet). For offline capabilities, see [full installation](#-installation-macos-linux-and-windows).
 
 ---
 
@@ -66,20 +66,28 @@ lue path/to/your/book.epub
 
 #### Optional Dependencies  
 - **espeak** - Kokoro TTS support
-- **antiword** - .doc file support
 
 #### macOS (Homebrew)
 ```bash
 brew install ffmpeg
 # Optional
-brew install espeak antiword
+brew install espeak
 ```
 
 #### Ubuntu/Debian
 ```bash
 sudo apt update && sudo apt install ffmpeg
 # Optional  
-sudo apt install espeak antiword
+sudo apt install espeak
+```
+
+#### Arch Linux (AUR)
+```bash
+# Using yay
+yay -S lue-reader-git
+
+# Or using paru
+paru -S lue-reader-git
 ```
 
 #### Windows
@@ -94,8 +102,7 @@ wsl --install
 sudo apt update && sudo apt upgrade -y
 sudo apt install ffmpeg python3 python3-pip -y
 # Optional  
-sudo apt install espeak antiword
-
+sudo apt install espeak
 ```
 
 ### Install Lue
@@ -198,6 +205,7 @@ lue --keys vim path/to/your/book.epub
 | `i` / `m`                               | Jump up or down by full pages for rapid navigation through longer documents                    |
 | `u` / `n`                               | Scroll up or down by smaller increments for fine-grained position control                      |
 | `y` / `b`                               | Jump directly to the beginning or end of the document for quick navigation                     |
+| `r`                                     | Open the recent books menu to quickly switch between 5 last read books                       |
 | `,` / `.`                               | Decrease or increase text-to-speech playback speed (1x to 3x)                                  |
 | `s` / `w`                               | Toggle sentence highlighting or word highlighting on/off                                       |
 | `v`                                     | Cycle through UI complexity modes (Minimal, Medium, Full)                                      |
