@@ -7,7 +7,7 @@ Markdown>=3.8.2
 platformdirs>=4.3.8
 
 # Default TTS model
-edge-tts>=7.2.0
+edge-tts>=7.2.7
 
 ## Optional TTS models (uncomment to enable)
 ## For Kokoro TTS, also install PyTorch for your platform:
