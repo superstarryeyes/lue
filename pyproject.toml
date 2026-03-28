@@ -41,6 +41,9 @@ kokoro = [
     "soundfile>=0.13.1",
     "huggingface-hub>=0.34.4",
 ]
+minimax = [
+    "requests>=2.28.0",
+]
 
 [project.scripts]
 lue = "lue.__main__:cli"

@@ -16,3 +16,6 @@ edge-tts>=7.2.7
 # kokoro>=0.9.4
 # soundfile>=0.13.1
 # huggingface-hub>=0.34.4
+
+## For MiniMax Cloud TTS (requires MINIMAX_API_KEY environment variable):
+# requests>=2.28.0

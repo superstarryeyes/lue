@@ -22,7 +22,7 @@
 | **Feature**                             | **Description**                                                                                |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **📖 Multi-Format Support**             | Support for EPUB, PDF, TXT, DOCX, DOC, HTML, RTF, and Markdown with seamless format detection  |
-| **👄 Modular TTS System**               | Edge TTS (default) and Kokoro TTS (local/offline) with extensible architecture for new models  |
+| **👄 Modular TTS System**               | Edge TTS (default), Kokoro TTS (local/offline), and [MiniMax Cloud TTS](https://platform.minimaxi.com/) with extensible architecture for new models  |
 | **🌍 Cross-Platform & Multilingual**    | Full support for macOS, Linux, Windows (via WSL) with 100+ languages and consistent global experience    |
 | **🎛️ Speed Adjustment**                 | Adjust text-to-speech playback speed from 1x to 3x for personalized listening experience       |
 | **🎯 Auto-Scroll & Precise Word Highlighting**        | Automatic scrolling and word-level highlighting synchronized with actual speech, improving focus and concentration     |
@@ -142,6 +142,27 @@ pip install -r requirements.txt
 
 # 4. Install Lue
 pip install .
+```
+
+#### Enable MiniMax Cloud TTS (Optional)
+
+For high-quality cloud-based TTS using the [MiniMax](https://platform.minimaxi.com/) speech-2.8-hd model:
+
+```bash
+# 1. Install the requests library
+pip install requests
+
+# Or install via optional dependency:
+pip install ".[minimax]"
+
+# 2. Set your MiniMax API key
+export MINIMAX_API_KEY="your-api-key-here"
+
+# 3. Use MiniMax TTS
+lue --tts minimax path/to/your/book.epub
+
+# 4. Optionally select a voice (see VOICES.md for the full list)
+lue --tts minimax --voice English_Persuasive_Man path/to/your/book.epub
 ```
 
 ---

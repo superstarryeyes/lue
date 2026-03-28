@@ -10,6 +10,7 @@ DEFAULT_TTS_MODEL = "edge"
 TTS_VOICES = {
     "edge": "en-US-JennyNeural",
     "kokoro": "af_heart",
+    "minimax": "English_Graceful_Lady",
 }
 
 # Language codes for TTS models that require them

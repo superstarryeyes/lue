@@ -659,3 +659,27 @@ Edge TTS provides a wide variety of voices across many languages. Always include
 *   pf_dora (Female)
 *   pm_alex (Male)
 *   pm_santa (Male)
+
+***
+
+### MiniMax Cloud Voices
+
+MiniMax Cloud TTS uses the `speech-2.8-hd` model and requires an API key. Set the `MINIMAX_API_KEY` environment variable before use.
+
+#### English
+
+*   **English_Graceful_Lady** (Female) - Default MiniMax voice
+*   English_Insightful_Speaker (Male)
+*   English_radiant_girl (Female)
+*   English_Persuasive_Man (Male)
+*   English_Lucky_Robot (Neutral)
+
+#### Multilingual
+
+*   Wise_Woman (Female)
+*   cute_boy (Male)
+*   lovely_girl (Female)
+*   Friendly_Person (Neutral)
+*   Inspirational_girl (Female)
+*   Deep_Voice_Man (Male)
+*   sweet_girl (Female)
