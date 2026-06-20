@@ -17,6 +17,8 @@ DEFAULT_KEYBOARD_SHORTCUTS = {
         "scroll_up": "u",
         "scroll_down": "n",
         "move_to_top_visible": "t",
+        "next_chapter": "x",
+        "prev_chapter": "z",
         "move_to_beginning": "y",
         "move_to_end": "b"
     },
@@ -177,6 +179,10 @@ def process_input(reader):
                 cmd = 'next_sentence'
             elif _matches_shortcut(data, nav_shortcuts.get("next_paragraph", "l")):
                 cmd = 'next_paragraph'
+            elif _matches_shortcut(data, nav_shortcuts.get("next_chapter", "x")):
+                cmd = 'next_chapter'
+            elif _matches_shortcut(data, nav_shortcuts.get("prev_chapter", "z")):
+                cmd = 'prev_chapter'
             elif _matches_shortcut(data, nav_shortcuts.get("scroll_page_up", "i")):
                 cmd = 'scroll_page_up'
             elif _matches_shortcut(data, nav_shortcuts.get("scroll_page_down", "m")):

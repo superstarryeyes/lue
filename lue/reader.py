@@ -642,6 +642,7 @@ class Lue:
     def _advance_position(self, current_pos, mode='sentence', wrap=True):
         c, p, s = current_pos
         if mode == 'paragraph': p, s = p + 1, 0
+        elif mode == 'chapter': c, p, s = c + 1, 0, 0
         else: s += 1
         while c < len(self.chapters):
             if p < len(self.chapters[c]):
@@ -657,6 +658,8 @@ class Lue:
         c, p, s = current_pos
         if mode == 'paragraph':
             p, s = p - 1, 0
+        elif mode == 'chapter':
+            c, p, s = c - 1, 0, 0
         else:
             s -= 1
 
@@ -1427,6 +1430,9 @@ class Lue:
                 # Force immediate UI update
                 asyncio.create_task(ui.display_ui(self))
             elif 'next' in cmd or 'prev' in cmd:
+                mode = cmd.split('_')[1] if '_' in cmd else ''
+                if mode == 'chapter' and len(self.chapters) <= 1:
+                    continue
                 if config.SMOOTH_SCROLLING_ENABLED:
                     self._handle_navigation_smooth(cmd)
                 else:

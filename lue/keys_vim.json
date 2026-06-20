@@ -9,6 +9,8 @@
     "scroll_up": "\u0015",
     "scroll_down": "\u0004",
     "move_to_top_visible": "H",
+    "next_chapter": "x",
+    "prev_chapter": "z",
     "move_to_beginning": "g",
     "move_to_end": "G"
   },
