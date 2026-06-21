@@ -1326,6 +1326,8 @@ class Lue:
                     pass
                 elif cmd == '_resize':
                     pass
+                elif isinstance(cmd, tuple):
+                    pass
                 else:
                     continue
 
@@ -1404,6 +1406,19 @@ class Lue:
                         self.auto_scroll_enabled = False
                         self._save_extended_progress(sync_audio_position=True)
                         self.pending_restart_task = asyncio.create_task(self._restart_audio_after_navigation())
+                elif command_name == 'chapter_click':
+                    x, y = data
+                    panel_x = getattr(self, 'chapter_index_panel_x', 0)
+                    panel_y = getattr(self, 'chapter_index_panel_y', 0)
+                    panel_w = getattr(self, 'chapter_index_panel_width', 0)
+                    panel_h = getattr(self, 'chapter_index_panel_height', 0)
+                    # Mouse coords are 1-based, panel_x/panel_y are 0-based
+                    if panel_x + 1 <= x <= panel_x + panel_w and panel_y + 1 <= y <= panel_y + panel_h:
+                        row = y - panel_y - 3  # 1-based to 0-based, minus border + padding
+                        if row >= 0:
+                            chapter_idx = self.chapter_index_scroll_offset + row
+                            if 0 <= chapter_idx < len(self.chapters):
+                                await self._jump_to_chapter(chapter_idx)
                 continue
             
             if cmd == 'quit': break

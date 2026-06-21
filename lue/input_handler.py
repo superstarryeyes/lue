@@ -100,6 +100,10 @@ def process_input(reader):
                                     
                                     if mouse_part.endswith('M'):
                                         if button == 0:
+                                            if getattr(reader, 'show_chapter_index', False):
+                                                reader.loop.call_soon_threadsafe(reader._post_command_sync, ('chapter_click', (x_pos, y_pos)))
+                                                continue
+
                                             if reader._is_click_on_progress_bar(x_pos, y_pos):
                                                 if reader._handle_progress_bar_click(x_pos, y_pos):
                                                     continue
