@@ -208,6 +208,8 @@ lue -m 3 path/to/your/book.epub
 | `t`                                     | Select and highlight the top sentence of the current visible page                              |
 | `h` / `l`                               | Move the reading line to the previous or next paragraph in the document                        |
 | `j` / `k`                               | Move the reading line to the previous or next sentence in the document                         |
+| `z` / `x`                               | Move the reading line to the previous or next chapter in the document                          |
+| `c`                                     | Open the chapter index menu to browse and jump to any chapter                                  |
 | `i` / `m`                               | Jump up or down by full pages for rapid navigation through longer documents                    |
 | `u` / `n`                               | Scroll up or down by smaller increments for fine-grained position control                      |
 | `y` / `b`                               | Jump directly to the beginning or end of the document for quick navigation                     |
