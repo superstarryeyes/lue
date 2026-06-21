@@ -4,6 +4,7 @@ import asyncio
 import subprocess
 import json
 import os
+import os
 
 # Default keyboard shortcuts
 DEFAULT_KEYBOARD_SHORTCUTS = {
@@ -68,11 +69,11 @@ def load_keyboard_shortcuts(file_path=None):
 def process_input(reader):
     """Process user input from stdin."""
     try:
-        if select.select([sys.stdin], [], [], 0)[0]:
-            data = sys.stdin.read(1)
-            
-            if not data:
+        while select.select([sys.stdin], [], [], 0)[0]:
+            raw = os.read(sys.stdin.fileno(), 1)
+            if not raw:
                 return
+            data = chr(raw[0])
             
             if data == '\x1b':
                 reader.mouse_sequence_buffer = data
@@ -100,10 +101,10 @@ def process_input(reader):
                                         if button == 0:
                                             if reader._is_click_on_progress_bar(x_pos, y_pos):
                                                 if reader._handle_progress_bar_click(x_pos, y_pos):
-                                                    return
+                                                    continue
                                             
                                             if not reader._is_click_on_text(x_pos, y_pos):
-                                                return
+                                                continue
 
                                             # Cancel any pending restart task before killing audio
                                             if hasattr(reader, 'pending_restart_task') and reader.pending_restart_task and not reader.pending_restart_task.done():
@@ -119,10 +120,10 @@ def process_input(reader):
                                             if reader.auto_scroll_enabled:
                                                 reader.auto_scroll_enabled = False
                                             reader.loop.call_soon_threadsafe(reader._post_command_sync, 'wheel_scroll_down')
-                                    return
+                                    continue
                             except (ValueError, IndexError):
                                 pass
-                    return
+                    continue
                 
                 elif reader.mouse_sequence_buffer.startswith('\x1b[') and len(reader.mouse_sequence_buffer) >= 3 and data in 'ABCD':
                     sequence = reader.mouse_sequence_buffer
@@ -130,7 +131,7 @@ def process_input(reader):
                     reader.mouse_sequence_active = False
                     
                     if reader.show_recent_menu:
-                        return
+                        continue
                     
                     _kill_audio_immediately(reader)
                     cmd = None
@@ -145,9 +146,9 @@ def process_input(reader):
                     
                     if cmd:
                         reader.loop.call_soon_threadsafe(reader._post_command_sync, cmd)
-                    return
+                    continue
                 
-                return
+                continue
             
             reader.mouse_sequence_buffer = ''
             reader.mouse_sequence_active = False
