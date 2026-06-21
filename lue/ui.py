@@ -667,6 +667,59 @@ def render_recent_books_overlay(reader, width, height):
     
     return panel, panel_width, panel_height
 
+def render_chapter_index_overlay(reader, width, height):
+    """Render the chapter index overlay for navigation."""
+    sel = reader.chapter_index_selection_idx
+    scroll_offset = getattr(reader, 'chapter_index_scroll_offset', 0)
+    total = len(reader.chapters)
+    panel_height = min(total + 4, height - 4)
+    max_visible = max(1, panel_height - 4)
+
+    table = Table(box=None, show_header=False, padding=0, expand=True)
+    table.add_column("Selection", width=3)
+    table.add_column("Title", ratio=1, no_wrap=True, overflow="ellipsis")
+
+    for i in range(scroll_offset, min(scroll_offset + max_visible, total)):
+        chapter = reader.chapters[i]
+        is_selected = i == sel
+        is_current = i == reader.chapter_idx
+
+        if is_selected:
+            style = "reverse bold cyan"
+            prefix = ">"
+        else:
+            style = COLORS.TEXT_NORMAL
+            prefix = " "
+
+        title = f"Chapter {i + 1}"
+        for para in chapter:
+            stripped = para.strip()
+            if stripped and len(stripped) > 3:
+                title = stripped
+                if len(title) > 60:
+                    title = title[:57] + "..."
+                break
+        if is_current:
+            title = f"* {title}"
+
+        table.add_row(
+            prefix,
+            Text(title, overflow="ellipsis", no_wrap=True),
+            style=style
+        )
+
+    panel = Panel(
+        table,
+        title="[bold cyan]Chapters[/bold cyan]",
+        border_style="cyan",
+        box=box.ROUNDED,
+        width=min(60, width - 4),
+        height=panel_height,
+        padding=(1, 1)
+    )
+
+    return panel, min(60, width - 4), panel_height
+
 async def display_ui(reader):
     """Display the UI."""
     if reader.render_lock.locked():
@@ -687,7 +740,9 @@ async def display_ui(reader):
                 # Add playback speed to trigger UI updates when speed changes
                 reader.playback_speed, getattr(reader, 'speed_reading_enabled', False), config.UI_MODE,
                 # Add recent menu state to trigger updates
-                reader.show_recent_menu, reader.recent_menu_selection_idx
+                reader.show_recent_menu, reader.recent_menu_selection_idx,
+                # Add chapter index state to trigger updates
+                getattr(reader, 'show_chapter_index', False), getattr(reader, 'chapter_index_selection_idx', 0)
             )
             
             if reader.last_rendered_state == current_state and reader.last_terminal_size == (width, height):
@@ -865,6 +920,25 @@ async def display_ui(reader):
                     # Move cursor to (start_y + i, start_x) - 1-based coordinates
                     overlay += f"\033[{start_y + i + 1};{start_x + 1}H{line}"
                 
+                full_output += overlay
+
+            # Overlay chapter index if needed
+            if getattr(reader, 'show_chapter_index', False):
+                chapter_panel, panel_width, panel_height = render_chapter_index_overlay(reader, width, height)
+                with temp_console.capture() as capture:
+                    temp_console.print(chapter_panel, end='', overflow='crop')
+                chapter_output = capture.get()
+
+                chapter_lines = chapter_output.split('\n')
+
+                start_y = (height - panel_height) // 2
+                start_x = (width - panel_width) // 2
+
+                overlay = ""
+                for i, line in enumerate(chapter_lines):
+                    if i >= panel_height: break
+                    overlay += f"\033[{start_y + i + 1};{start_x + 1}H{line}"
+
                 full_output += overlay
 
             sys.stdout.write(full_output)

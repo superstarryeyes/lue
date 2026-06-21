@@ -23,7 +23,8 @@
   },
   "display_controls": {
     "toggle_auto_scroll": "a",
-    "cycle_ui_complexity": "v"
+    "cycle_ui_complexity": "v",
+    "toggle_chapter_index": "c"
   },
   "application": {
     "quit": "q",

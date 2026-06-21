@@ -32,7 +32,8 @@ DEFAULT_KEYBOARD_SHORTCUTS = {
     },
     "display_controls": {
         "toggle_auto_scroll": "a",
-        "cycle_ui_complexity": "v"
+        "cycle_ui_complexity": "v",
+        "toggle_chapter_index": "c"
     },
     "application": {
         "quit": "q"
@@ -132,7 +133,14 @@ def process_input(reader):
                     
                     if reader.show_recent_menu:
                         continue
-                    
+
+                    if getattr(reader, 'show_chapter_index', False):
+                        if data == 'A':
+                            reader.loop.call_soon_threadsafe(reader._post_command_sync, 'scroll_up')
+                        elif data == 'B':
+                            reader.loop.call_soon_threadsafe(reader._post_command_sync, 'scroll_down')
+                        continue
+
                     _kill_audio_immediately(reader)
                     cmd = None
                     if data == 'C':
@@ -210,6 +218,8 @@ def process_input(reader):
                 cmd = 'toggle_word_highlight'
             elif _matches_shortcut(data, display_shortcuts.get("cycle_ui_complexity", "v")):
                 cmd = 'cycle_ui_complexity'
+            elif _matches_shortcut(data, display_shortcuts.get("toggle_chapter_index", "c")):
+                cmd = 'toggle_chapter_index'
             
             if cmd:
                 reader.loop.call_soon_threadsafe(reader._post_command_sync, cmd)
